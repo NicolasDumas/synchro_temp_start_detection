@@ -15,7 +15,7 @@ import wavio
 fs, s = aIO.read_audio_file("wav/ref_bip.wav")
 s_ref = s[3000:18000, 0]
 print(fs, s_ref.shape)
-duration g = len(s_ref) / float(fs)
+duration = len(s_ref) / float(fs)
 print(f'duration = {duration} seconds')
 
 # extract short-term features using a 50msec non-overlapping windows
@@ -54,7 +54,7 @@ plt.plot(distances)
 plt.show()
 
 
-# wavio.write("resultats/ref_bip.wav", s_ref, fs, sampwidth=1)
+wavio.write("resultats/ref_bip.wav", s_ref, fs)
 index_start_fen = round((tps_bip - 0.5) * fs)
 index_end_fen = round((tps_bip + 0.5) * fs)
 index_start = round(tps_bip * fs)
