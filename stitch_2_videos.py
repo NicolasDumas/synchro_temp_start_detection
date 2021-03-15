@@ -38,8 +38,7 @@ def stitch(save_path, video1, video2, time_difference, src_pts1, dest_pts1, src_
 
     # output video
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    file_name = save_path.split('/')[-2] + '_from_above.mp4'
-    out = cv2.VideoWriter(save_path + file_name, fourcc, fps, (shape_output_img[0], shape_output_img[1]))
+    out = cv2.VideoWriter(save_path, fourcc, fps, (shape_output_img[0], shape_output_img[1]))
 
     # Check if camera opened successfully
     if cap1.isOpened() == False:
@@ -68,6 +67,7 @@ def stitch(save_path, video1, video2, time_difference, src_pts1, dest_pts1, src_
             out.write(out_top)
     cap1.release()
     cap2.release()
+    return fps
 
 
 if __name__ == "__main__":
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     parser.add_argument('--json', help='Path of the json of the race')
     parser.add_argument('--videog', help='Path of the left video')
     parser.add_argument('--videod', help='Path of the right video')
-    parser.add_argument('--out', help='Path to output the result')
+    parser.add_argument('--out', help='Path to output the result with name of the file in .mp4')
     args = parser.parse_args()
 
     save_path = args.out
@@ -102,4 +102,22 @@ if __name__ == "__main__":
     time_difference = time_left - time_right
 
     # run the function
-    stitch(save_path, video1, video2, time_difference, src_pts1, dest_pts1, src_pts2, dest_pts2)
+    fps = stitch(save_path, video1, video2, time_difference, src_pts1, dest_pts1, src_pts2, dest_pts2)
+
+    # change and save the json
+    from_above_info = {'name': save_path.split('/')[-1],
+                       'type_video': 'vueDessus',
+                       'start_moment': min(time_right, time_left),
+                       'one_is_up': json_course['videos'][index_vid1]['one_is_up'],
+                       'generated_from': [video1_name, video2_name],
+                       'fps': fps}
+    json_course['videos'].append(from_above_info)
+    with open(args.json, 'w') as outfile:
+        json.dump(json_course, outfile, indent=4)
+
+    # # to run :
+    # python3 pipeline-tracking-docs/synchro_prepro/stitch_2_videos.py
+    # --json test_videos/2021_Nice_brasse_50_finaleA_dames.json
+    # --videog test_videos/2021_Nice_brasse_50_finaleA_dames_fixeGauche.mp4
+    # --videod test_videos/2021_Nice_brasse_50_finaleA_dames_fixeDroite.mp4
+    # --out test_videos/2021_Nice_brasse_50_finaleA_dames_from_above.mp4

@@ -58,5 +58,5 @@ if __name__ == "__main__":
     json_course['videos'][index_vid]['start_moment'] = start_time
 
     with open(args.json, 'w') as outfile:
-        json.dump(json_course, outfile)
+        json.dump(json_course, outfile, indent=4)
     # Todo reflechir quels arguments on met : plutot race, json path, video path ou folder, race, video
