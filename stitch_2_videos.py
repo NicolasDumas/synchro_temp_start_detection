@@ -6,9 +6,11 @@ import argparse
 
 def get_index(list_dict, vid_name):
     """helper to read the json file."""
+    index = -1
     for i in range(len(list_dict)):
         if list_dict[i]['name'] == vid_name:
-            return i
+            index = i
+    return index
 
 
 def stitch(save_path, video1, video2, time_difference, src_pts1, dest_pts1, src_pts2, dest_pts2):
@@ -111,7 +113,13 @@ if __name__ == "__main__":
                        'one_is_up': json_course['videos'][index_vid1]['one_is_up'],
                        'generated_from': [video1_name, video2_name],
                        'fps': fps}
-    json_course['videos'].append(from_above_info)
+    # if the info on the video exists we delete the information:
+    index_from_above = get_index(json_course['videos'], save_path.split('/')[-1])
+    if index_from_above > -1:
+        json_course['videos'][index_from_above] = from_above_info
+    else:
+        json_course['videos'].append(from_above_info)
+
     with open(args.json, 'w') as outfile:
         json.dump(json_course, outfile, indent=4)
 
