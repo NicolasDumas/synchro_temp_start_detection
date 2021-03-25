@@ -63,6 +63,7 @@ target/
 videos/
 wav/
 resultats/
+test_two_lanes/
 *.zip
 *.npy
 
