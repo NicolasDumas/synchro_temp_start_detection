@@ -4,6 +4,7 @@ import pandas as pd
 import argparse
 import json
 
+
 def get_index(list_dict, vid_name):
     """helper to read the json file."""
     index = -1
@@ -72,7 +73,6 @@ if __name__ == "__main__":
     start_time = json_course['videos'][index_vid]['start_moment']
     data = pd.read_csv(args.csv)  # id, frame_number, swimmer, x1, x2, y1, y2, event, cycles
     data = data.to_numpy()
-    print(data.shape)
     all_swimmers = [[] for i in range(8)]
     for i in range(8):
         all_swimmers[i] = np.squeeze(data[np.argwhere(data[:, 2] == i)])[:, (1, 3)]
