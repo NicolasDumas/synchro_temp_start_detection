@@ -14,7 +14,7 @@ def get_index(list_dict, vid_name):
     return index
 
 
-def display_positions(video, start_time, positions, save_path):
+def display_positions(video, start_time, positions, save_path, start_side_vid):
     cap = cv2.VideoCapture(video)
     fps = cap.get(cv2.CAP_PROP_FPS)
     time_shift = round((start_time - 1) * fps)
@@ -40,6 +40,10 @@ def display_positions(video, start_time, positions, save_path):
             for i in range(len(positions)):
                 x = positions[i][compt][1]
                 if x != -1:
+                    if start_side_vid == 'right':
+                        x = (50 - x) * 1920 / 50
+                    else:
+                        x = x * 1920 / 50
                     x = int((50-x)*frame.shape[1]/50)
                     width_line = 10
 
@@ -71,13 +75,14 @@ if __name__ == "__main__":
     name_of_video = args.video.split('/')[-1]
     index_vid = get_index(json_course['videos'], name_of_video)
     start_time = json_course['videos'][index_vid]['start_moment']
+    start_side = json_course['videos'][index_vid]['start_side']
     data = pd.read_csv(args.csv)  # id, frame_number, swimmer, x1, x2, y1, y2, event, cycles
     data = data.to_numpy()
     all_swimmers = [[] for i in range(8)]
     for i in range(8):
         all_swimmers[i] = np.squeeze(data[np.argwhere(data[:, 2] == i)])[:, (1, 3)]
     all_swimmers = np.array(all_swimmers)
-    display_positions(args.video, start_time, all_swimmers, args.out)
+    display_positions(args.video, start_time, all_swimmers, args.out, start_side_vid)
 
     # information of the video in the json
     # change and save the json
@@ -86,7 +91,9 @@ if __name__ == "__main__":
                        'start_moment': 1,
                        'one_is_up': json_course['videos'][index_vid]['one_is_up'],
                        'generated_from': [name_of_video, args.csv.split('/')[-1]],
-                       'fps': json_course['videos'][index_vid]['fps']}
+                       'fps': json_course['videos'][index_vid]['fps'],
+                       'start_side': start_side
+                    }
     index_posivid = get_index(json_course['videos'], args.out.split('/')[-1])
     if index_posivid > -1:
         json_course['videos'][index_posivid] = posivid_info

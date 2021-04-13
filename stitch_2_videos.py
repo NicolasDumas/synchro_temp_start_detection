@@ -13,7 +13,7 @@ def get_index(list_dict, vid_name):
     return index
 
 
-def stitch(save_path, video1, video2, time_difference, src_pts1, dest_pts1, src_pts2, dest_pts2):
+def stitch(save_path, video1, video2, time_difference, src_pts1, dest_pts1, src_pts2, dest_pts2, start_side_vid):
     """Stitches video1 and video2 based on the source and destination points
     Saves the result at save_path"""
     # hard coded size of the reference image
@@ -103,8 +103,11 @@ if __name__ == "__main__":
     time_right = json_course['videos'][index_vid2]['start_moment']
     time_difference = time_left - time_right
 
+    # side where the swimmers start on the video
+    start_side = json_course['videos'][index_vid1]['start_side']
+
     # run the function
-    fps = stitch(save_path, video1, video2, time_difference, src_pts1, dest_pts1, src_pts2, dest_pts2)
+    fps = stitch(save_path, video1, video2, time_difference, src_pts1, dest_pts1, src_pts2, dest_pts2, start_side)
 
     # change and save the json
     from_above_info = {'name': save_path.split('/')[-1],
@@ -112,7 +115,8 @@ if __name__ == "__main__":
                        'start_moment': min(time_right, time_left),
                        'one_is_up': json_course['videos'][index_vid1]['one_is_up'],
                        'generated_from': [video1_name, video2_name],
-                       'fps': fps}
+                       'fps': fps,
+                       'start_side': start_side}
     # if the info on the video exists we delete the information:
     index_from_above = get_index(json_course['videos'], save_path.split('/')[-1])
     if index_from_above > -1:

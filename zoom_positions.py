@@ -54,7 +54,8 @@ def zoom(video, start_time, swimmer_data, save_path, size_box):
     cap.release()
 
 
-def zoom_two_videos(videog, videod, start_timeg, start_timel, swimmer_data, hm_right, hm_left, save_path, size_box):
+def zoom_two_videos(videog, videod, start_timeg, start_timel, swimmer_data, hm_right, hm_left, save_path, size_box,
+                    start_size_vid):
     capg = cv2.VideoCapture(videog)
     capd = cv2.VideoCapture(videod)
     fps = capg.get(cv2.CAP_PROP_FPS)
@@ -62,7 +63,7 @@ def zoom_two_videos(videog, videod, start_timeg, start_timel, swimmer_data, hm_r
     time_shiftd = round((start_timel - 1) * fps)
     compt = 0
     # output video
-    fourcc = cv2.VideoWriter_fourcc(*'XVID')
+    fourcc = cv2.VideoWriter_fourcc(*'MP4V')
     out = cv2.VideoWriter(save_path, fourcc, fps, size_box)
     new_hm_right = np.linalg.inv(hm_right)
     new_hm_left = np.linalg.inv(hm_left)
@@ -83,8 +84,13 @@ def zoom_two_videos(videog, videod, start_timeg, start_timel, swimmer_data, hm_r
             x = swimmer_data[compt][1]
             to_save = np.zeros((size_box[1], size_box[0], 3)).astype(np.uint8)
             if x != -1 and x < 25:
+                # convert x to a position that the homography maps
                 # coor vue dessus
-                x = (50 - x) * 1920 / 50
+                if start_size_vid == 'right':
+                    x = (50 - x) * 1920 / 50
+                else:
+                    x = x * 1920 / 50
+
                 w = size_box[1]
                 y = 1080 * 3 / 8
                 h = size_box[0]
@@ -97,8 +103,13 @@ def zoom_two_videos(videog, videod, start_timeg, start_timel, swimmer_data, hm_r
                 # to_save = np.zeros(size_box)
                 to_save = framed[y_side - h//2:y_side + h//2, x_side - w//2:x_side + w//2]
             elif x != -1:
+                # convert x to a position that the homography maps
                 # coor vue dessus
-                x = (50 - x) * 1920 / 50
+                if start_size_vid == 'right':
+                    x = (50 - x) * 1920 / 50
+                else:
+                    x = x * 1920 / 50
+
                 w = size_box[1]
                 y = 1080 * 3 / 8
                 h = size_box[0]
@@ -161,7 +172,10 @@ if __name__ == '__main__':
 
     start_timeg = json_course['videos'][index_vidg]['start_moment']
     start_timel = json_course['videos'][index_vidd]['start_moment']
-    zoom_two_videos(videog, videod,start_timeg, start_timel, swimmer, hm_right, hm_left, 'videos/zoom_good.mp4', size_box)
+    # side where the swimmers start on the video
+    start_side = json_course['videos'][index_vidg]['start_side']
+    zoom_two_videos(videog, videod,start_timeg, start_timel, swimmer, hm_right, hm_left, 'videos/zoom_good.mp4',
+                    size_box, start_side)
 
     x = 1920
     y = 1080
