@@ -37,5 +37,4 @@ six==1.15.0
 threadpoolctl==2.1.0
 toml==0.10.2
 tqdm==4.57.0
-urllib3==1.26.3
 wavio==0.0.4
