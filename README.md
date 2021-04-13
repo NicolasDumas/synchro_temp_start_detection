@@ -1,4 +1,4 @@
-# Tools for video swimming video analysis
+# Tools for swimming video analysis
 
 This repository contains different scripts to help handle and analyse videos from swimming races. Those scripts are used to do jobs on a server. 
 
