@@ -41,10 +41,9 @@ def display_positions(video, start_time, positions, save_path, start_side_vid):
                 x = positions[i][compt][1]
                 if x != -1:
                     if start_side_vid == 'right':
-                        x = (50 - x) * 1920 / 50
+                        x = int((50 - x) * frame.shape[1] / 50)
                     else:
-                        x = x * 1920 / 50
-                    x = int((50-x)*frame.shape[1]/50)
+                        x = int(x * frame.shape[1] / 50)
                     width_line = 10
 
                     y = int(frame.shape[0]*i/8)
@@ -82,7 +81,7 @@ if __name__ == "__main__":
     for i in range(8):
         all_swimmers[i] = np.squeeze(data[np.argwhere(data[:, 2] == i)])[:, (1, 3)]
     all_swimmers = np.array(all_swimmers)
-    display_positions(args.video, start_time, all_swimmers, args.out, start_side_vid)
+    display_positions(args.video, start_time, all_swimmers, args.out, start_side)
 
     # information of the video in the json
     # change and save the json
