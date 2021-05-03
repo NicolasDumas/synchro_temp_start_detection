@@ -2,15 +2,16 @@ from pyAudioAnalysis import MidTermFeatures as aFm
 from pyAudioAnalysis import audioBasicIO as aIO
 import moviepy.editor as mp
 import numpy as np
-import argparse
-import json
+# import argparse
+# import json
+import matplotlib.pyplot as plt
 
 
-def get_index(list_dict, vid_name):
-    """helper to read the json file."""
-    for i in range(len(list_dict)):
-        if list_dict['videos'][i]['name'] == vid_name:
-            return i
+# def get_index(list_dict, vid_name):
+#     """helper to read the json file."""
+#     for i in range(len(list_dict)):
+#         if list_dict['videos'][i]['name'] == vid_name:
+#             return i
 
 
 def extract_time_start(video_path, bip_ref_path="ref_bip_isolated.wav"):
@@ -36,12 +37,34 @@ def extract_time_start(video_path, bip_ref_path="ref_bip_isolated.wav"):
                                                              win * fs, step * fs)
 
     # compute the distance and get the minimum
+    
+
+
     distances = np.linalg.norm(mt_long - mt_ref, axis=0)
-    time_start = np.argmin(distances) * duration_long / mt_long.shape[1]
+    
+    
+    max_dist = max(distances)
+    time_start = []
+    for i in range (1):
+        arg_min_dist = np.argmin(distances)
+        time_start.append(np.argmin(distances) * duration_long / mt_long.shape[1])
+        distances[arg_min_dist] = max_dist
+    
+    plt.plot(mt_ref)
+    plt.plot(mt_long.T[arg_min_dist])
+
+    
     return time_start
 
 
 if __name__ == "__main__":
-    video = 'videos/2021_Nice_freestyle_50_serie4_hommes_fixeDroite.mp4'
+    video = 'videos/50_DOS_M_FA_lowered.mp4'
     start_time = extract_time_start(video)
     print(start_time)
+    
+
+
+
+
+
+
