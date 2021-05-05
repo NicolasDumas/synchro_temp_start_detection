@@ -43,22 +43,17 @@ def extract_time_start(video_path, bip_ref_path="ref_bip_isolated.wav"):
     distances = np.linalg.norm(mt_long - mt_ref, axis=0)
     
     
-    max_dist = max(distances)
-    time_start = []
-    for i in range (1):
-        arg_min_dist = np.argmin(distances)
-        time_start.append(np.argmin(distances) * duration_long / mt_long.shape[1])
-        distances[arg_min_dist] = max_dist
+    time_start = np.argmin(distances) * duration_long / mt_long.shape[1]
     
-    plt.plot(mt_ref)
-    plt.plot(mt_long.T[arg_min_dist])
+    # plt.plot(mt_ref)
+    # plt.plot(mt_long.T[arg_min_dist])
 
     
     return time_start
 
 
 if __name__ == "__main__":
-    video = 'videos/50_DOS_M_FA_lowered.mp4'
+    video = 'videos/2021_Marseille_brasse_hommes_50_finaleA_fixeDroite.mp4'
     start_time = extract_time_start(video)
     print(start_time)
     
