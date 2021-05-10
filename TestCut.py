@@ -44,7 +44,7 @@ def edit_video(loadtitle, savetitle, cut):
     final_clip = mpy.concatenate_videoclips(clips)
     
     
-    final_clip.write_videofile(savetitle, threads=4, fps=24,
+    final_clip.write_videofile(savetitle, threads=4, fps=25,
                                codec = vcodec,
                                preset = compression,
                                ffmpeg_params=["-crf",videoquality])
@@ -57,14 +57,14 @@ def extract_audio(savetitle, saveaudio):
     audio.write_audiofile(saveaudio, 44100)
     
     
-if __name__ == "__main__":
-    for i in range(15):
-        loadtitle = "videos2/video" + str(i) + '.mp4'
-        start_time = extract_time_start(loadtitle)
-        bip_duration = 0.3401360544217687
-        cut = (time_cut(start_time), time_cut(start_time + bip_duration))
-        savetitle = "bips/clip" + str(i) + '.mp4'
-        saveaudio = "bips/BIP" + str(i) + '.wav'
-        edit_video(loadtitle, savetitle, cut)
-        extract_audio(savetitle, saveaudio)
+# if __name__ == "__main__":
+#     for i in range(17):
+#         loadtitle = "videos - Copie/video" + str(i) + '.mp4'
+#         start_time = extract_time_start(loadtitle)
+#         bip_duration = 0.3401360544217687
+#         cut = (time_cut(start_time), time_cut(start_time + bip_duration))
+#         savetitle = "NewBips/newclip" + str(i) + '.mp4'
+#         saveaudio = "NewBips/newBIP" + str(i) + '.wav'
+#         edit_video(loadtitle, savetitle, cut)
+#         extract_audio(savetitle, saveaudio)
     
