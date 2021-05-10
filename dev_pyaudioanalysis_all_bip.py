@@ -148,11 +148,10 @@ def extract_time_allbip(mt, video_path, bip_ref_path="ref_bip_isolated.wav"):
                 temps_possible_non_aberrant.append(temps_possible[i])
     
     
-    return temps_possible_non_aberrant
+    return temps_possible
 
 
-
-video = 'videosEspadon/50 NL MESSIEURS FINALE BEROL MIGNON DE BOER MANAUDOU PUTS GROUSSET PIJNENBURG SIMONS.mp4'
+video = 'videosEspadon/50 BRASSE DAMES FINALE DUHAMEL MAMIE DELMAS METZ TETEREVKOVA GALLEGO SCHOUTEN RODRIUES.mp4'
 
 
 
