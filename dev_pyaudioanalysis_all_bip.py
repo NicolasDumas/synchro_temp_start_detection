@@ -148,17 +148,15 @@ def extract_time_allbip(mt, video_path, bip_ref_path="ref_bip_isolated.wav"):
                 temps_possible_non_aberrant.append(temps_possible[i])
     
     
-    return temps_possible
+    return temps_possible_non_aberrant
 
-
-video = 'videosEspadon/50 BRASSE DAMES FINALE DUHAMEL MAMIE DELMAS METZ TETEREVKOVA GALLEGO SCHOUTEN RODRIUES.mp4'
-
+# video = 'VideoYoutube/natation-le-relais-francais-en-argent-derriere-les-etats-unis.mp4'
 
 
 
 
-# if __name__ == "__main__":
-#     mt = extract_allbip()
-#     video = 'videosEspadon/50 PAP MESSIEURS FINALE MIGNON PIRON PONTI MANAUDOU KORSTANJE GROUSSET VERMOREL PUTS.mp4'
-#     start_time = extract_time_allbip(mt, video)
-#     print(start_time)
+if __name__ == "__main__":
+    mt = extract_allbip()
+    video = 'VideoYoutube/la-finale-du-relais-4x100m-4-nages.mp4'
+    start_time = extract_time_allbip(mt, video)
+    print(start_time)
