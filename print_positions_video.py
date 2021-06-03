@@ -14,7 +14,7 @@ def get_index(list_dict, vid_name):
     return index
 
 
-def display_positions(video, start_time, positions, save_path, start_side_vid):
+def display_positions(video, start_time, positions, save_path, start_side_vid, one_is_up):
     cap = cv2.VideoCapture(video)
     fps = cap.get(cv2.CAP_PROP_FPS)
     time_shift = round((start_time - 1) * fps)
@@ -40,14 +40,19 @@ def display_positions(video, start_time, positions, save_path, start_side_vid):
             for i in range(len(positions)):
                 x = positions[i][compt][1]
                 if x != -1:
+                    # check were should the line be on x axis
                     if start_side_vid == 'right':
                         x = int((50 - x) * frame.shape[1] / 50)
                     else:
                         x = int(x * frame.shape[1] / 50)
-                    width_line = 10
+                    # check were should the line be on y axis
+                    if one_is_up == "true":
+                        y = int(frame.shape[0]*i/8)
+                    else:
+                        y = int(frame.shape[0]*(7 - i)/8)
 
-                    y = int(frame.shape[0]*i/8)
                     h = int(frame.shape[0]/8)
+                    width_line = 10
 
                     frame[y :y + h, x:x + width_line] = 0
 
@@ -75,13 +80,14 @@ if __name__ == "__main__":
     index_vid = get_index(json_course['videos'], name_of_video)
     start_time = json_course['videos'][index_vid]['start_moment']
     start_side = json_course['videos'][index_vid]['start_side']
+    one_is_up = json_course['videos'][index_vid]['one_is_up']
     data = pd.read_csv(args.csv)  # id, frame_number, swimmer, x1, x2, y1, y2, event, cycles
     data = data.to_numpy()
     all_swimmers = [[] for i in range(8)]
     for i in range(8):
         all_swimmers[i] = np.squeeze(data[np.argwhere(data[:, 2] == i)])[:, (1, 3)]
     all_swimmers = np.array(all_swimmers)
-    display_positions(args.video, start_time, all_swimmers, args.out, start_side)
+    display_positions(args.video, start_time, all_swimmers, args.out, start_side, one_is_up)
 
     # information of the video in the json
     # change and save the json

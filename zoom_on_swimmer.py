@@ -15,7 +15,7 @@ def get_index(list_dict, vid_name):
 
 
 def zoom_two_videos(videog, videod, start_timeg, start_timed, swimmer_data, hm_right, hm_left, save_path, size_box,
-                    start_size_vid):
+                    start_size_vid, lane):
     """Input: right and left video of the race, start_time gauche, start time droite, données du nageur
     Il doit y avoir autant de donnée qu'il y a de frame dans la vidéo"""
     capg = cv2.VideoCapture(videog)
@@ -62,7 +62,7 @@ def zoom_two_videos(videog, videod, start_timeg, start_timed, swimmer_data, hm_r
                     x = x * 1920 / 50
 
                 w = size_box[0]
-                y = 1080 * 3 / 8
+                y = 1080 * (lane - 1 + 0.5) / 8
                 h = size_box[1]
 
                 # compute coordinates using linear algebra
@@ -81,7 +81,7 @@ def zoom_two_videos(videog, videod, start_timeg, start_timed, swimmer_data, hm_r
                     x = x * 1920 / 50
 
                 w = size_box[0]
-                y = 1080 * 3 / 8
+                y = 1080 * (lane - 1 + 0.5) / 8
                 h = size_box[1]
                 # using the opencv functions
                 to_transform = np.float32([[[x, y]]])  # np.array([x, y, 1])
@@ -118,6 +118,7 @@ if __name__ == '__main__':
     index_vidg = get_index(json_course['videos'], name_of_video_to_get_info_gauche)
     index_vidd = get_index(json_course['videos'], name_of_video_to_get_info_droite)
     start_side = json_course['videos'][index_vidg]['start_side']
+    one_is_up = json_course['videos'][index_vidg]['one_is_up']
     start_timeg = json_course['videos'][index_vidg]['start_moment']
     start_timed = json_course['videos'][index_vidd]['start_moment']
     fps = int(json_course['videos'][index_vidd]['fps'])
@@ -174,9 +175,13 @@ if __name__ == '__main__':
         print(all_swimmers[0])
 
     # let's compute the zoom
+    if one_is_up == "true":
+        lane = int(args.lane)
+    else:
+        lane = 8 - int(args.lane)
     size_box = (384, 256)
     zoom_two_videos(args.videog, args.videod, start_timeg, start_timed, all_swimmers[int(args.lane)], hm_right, hm_left, args.out,
-                    size_box, start_side)
+                    size_box, start_side, lane)
 
     # information of the video in the json
     # change and save the json
