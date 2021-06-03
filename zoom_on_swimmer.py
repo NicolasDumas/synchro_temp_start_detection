@@ -80,9 +80,9 @@ def zoom_two_videos(videog, videod, start_timeg, start_timed, swimmer_data, hm_r
                 else:
                     x = x * 1920 / 50
 
-                w = size_box[1]
+                w = size_box[0]
                 y = 1080 * 3 / 8
-                h = size_box[0]
+                h = size_box[1]
                 # using the opencv functions
                 to_transform = np.float32([[[x, y]]])  # np.array([x, y, 1])
                 coorg = cv2.perspectiveTransform(to_transform, new_hm_left)
