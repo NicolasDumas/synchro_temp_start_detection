@@ -61,9 +61,9 @@ def zoom_two_videos(videog, videod, start_timeg, start_timed, swimmer_data, hm_r
                 else:
                     x = x * 1920 / 50
 
-                w = size_box[1]
+                w = size_box[0]
                 y = 1080 * 3 / 8
-                h = size_box[0]
+                h = size_box[1]
 
                 # compute coordinates using linear algebra
                 coor_maind = np.dot(new_hm_right, np.array([x, y, 1]))
@@ -174,7 +174,7 @@ if __name__ == '__main__':
         print(all_swimmers[0])
 
     # let's compute the zoom
-    size_box = (256, 256)
+    size_box = (384, 256)
     zoom_two_videos(args.videog, args.videod, start_timeg, start_timed, all_swimmers[int(args.lane)], hm_right, hm_left, args.out,
                     size_box, start_side)
 
