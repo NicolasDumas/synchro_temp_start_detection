@@ -180,7 +180,7 @@ if __name__ == '__main__':
     else:
         lane = 8 - int(args.lane)
     size_box = (384, 256)
-    zoom_two_videos(args.videog, args.videod, start_timeg, start_timed, all_swimmers[int(args.lane)], hm_right, hm_left, args.out,
+    zoom_two_videos(args.videog, args.videod, start_timeg, start_timed, all_swimmers[int(args.lane)-1], hm_right, hm_left, args.out,
                     size_box, start_side, lane)
 
     # information of the video in the json
