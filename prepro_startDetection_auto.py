@@ -13,7 +13,7 @@ def get_index(list_dict, vid_name):
             return i
 
 
-def extract_time_start(video_path, bip_ref_path="ref_bip_isolated.wav", references_path = "ref_features_bip.npy"):
+def extract_time_start(video_path, bip_ref_path="ref_bip_isolated.wav", references_path="ref_features_bip.npy"):
     mt = np.load(references_path)
     fs, s_ref = aIO.read_audio_file(bip_ref_path)
     duration = len(s_ref) / float(fs)
@@ -70,8 +70,9 @@ if __name__ == "__main__":
     parser.add_argument('--json', help='Path of the json of the race')
     parser.add_argument('--video', help='Path of the video')
     parser.add_argument('--ref', help='Reference to use as the noise for the start.', default='ref_bip_isolated.wav')
+    parser.add_argument('--ref_feat', help='Reference features of various sounds in vector of len 136', default='ref_features_bip.npy')
     args = parser.parse_args()
-    start_time = extract_time_start(args.video, bip_ref_path=args.ref)
+    start_time = extract_time_start(args.video, bip_ref_path=args.ref, references_path=args.ref_feat)
 
     with open(args.json) as json_file:
         json_course = json.load(json_file)

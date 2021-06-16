@@ -65,7 +65,6 @@ wav/
 resultats/
 test_two_lanes/
 *.zip
-*.npy
 
 #checkpoints of jupyter
 .ipynb_checkpoints/
