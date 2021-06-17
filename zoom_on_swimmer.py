@@ -15,7 +15,7 @@ def get_index(list_dict, vid_name):
 
 
 def zoom_two_videos(videog, videod, start_timeg, start_timed, swimmer_data, hm_right, hm_left, save_path, size_box,
-                    start_size_vid, lane):
+                    start_size_vid, lane, fps_analyse):
     """Input: right and left video of the race, start_time gauche, start time droite, données du nageur
     Il doit y avoir autant de donnée qu'il y a de frame dans la vidéo"""
     capg = cv2.VideoCapture(videog)
@@ -150,6 +150,7 @@ if __name__ == '__main__':
         all_swimmers = []
         for i in range(8):
             swimmer = np.squeeze(data[np.argwhere(data[:, 2] == i)])[:, (1, 3)]
+            print(swimmer)
             to_interpolate = pd.DataFrame(swimmer, columns=['x', 'y'])
             to_interpolate = to_interpolate.replace('-1', np.nan)
             to_interpolate.loc[start_frame] = -1.1
@@ -161,17 +162,44 @@ if __name__ == '__main__':
             all_swimmers.append(swimmer) # just change to swimmer to cancel the interpolation
         all_swimmers = np.array(all_swimmers)
     elif args.type_data == 'manuel':
-        data = pd.read_csv(args.csv)
-        # some info on the data
+        data = pd.read_csv(args.csv) # col : time	id	x	y	swimmer	events	distance
         name_of_video_to_get_info_above = args.json.split('/')[-1].split('.')[0] + '_from_above.mp4'
         index_vid_above = get_index(json_course['videos'], name_of_video_to_get_info_above)
         start_time_above = json_course['videos'][index_vid_above]['start_moment']
-        data['frame_number'] = ((data['time'] - start_time_above + 1)*fps).astype(int)
-        data.set_index('frame_number', inplace=True)
-        data = data.groupby(by='id').apply(lambda x : x.reindex(range(0, max(x.index) + 1))) # .interpolate(method='index')
-        data.loc[(slice(None),start_frame)] = -1.1
-        data = data.groupby(level='id').apply(lambda x: x.to_numpy())
-        all_swimmers = [data[i] for i in range(len(data))]
+        data['frame_number'] = ((data['time'] - start_time_above + 1) * fps).astype(int)
+        data = data.to_numpy() # col: time, id, x, y, swimmer, events, distance, frame_number
+        all_swimmers = []
+        for i in range(8):
+            swimmer = np.squeeze(data[np.argwhere(data[:, 1] == i)])[:, (7, 3, 6)]
+            print(swimmer)
+            to_interpolate = pd.DataFrame(swimmer, columns=['frame_number', 'y', 'x'])
+            to_interpolate['y'] = to_interpolate['y'].astype(float)
+            to_interpolate['x'] = to_interpolate['x'].astype(float)
+
+            to_interpolate.set_index('frame_number', inplace=True)
+            print(to_interpolate)
+            to_interpolate = to_interpolate.reindex(range(0, max(to_interpolate.index) + 1))
+            to_interpolate.loc[0] = 0
+            # print(swimmer)
+            data_to_print = to_interpolate[['y', 'x']].interpolate(method='index')
+            # data_to_print['y'] = data_to_print['y'].astype(int)
+            # data_to_print['x'] = data_to_print['x'].astype(int)
+            data_to_print = data_to_print.to_numpy()
+            all_swimmers.append(data_to_print) # just change to swimmer to cancel the interpolation
+        all_swimmers = np.array(all_swimmers)
+
+        # data = pd.read_csv(args.csv) # col : time	id	x	y	swimmer	events	distance
+        # # some info on the data
+        # name_of_video_to_get_info_above = args.json.split('/')[-1].split('.')[0] + '_from_above.mp4'
+        # index_vid_above = get_index(json_course['videos'], name_of_video_to_get_info_above)
+        # start_time_above = json_course['videos'][index_vid_above]['start_moment']
+        # # get the time column to frame number
+        # data['frame_number'] = ((data['time'] - start_time_above + 1)*fps).astype(int)
+        # data.set_index('frame_number', inplace=True)
+        # data = data.groupby(by='id').apply(lambda x : x.reindex(range(0, max(x.index) + 1))) # .interpolate(method='index')
+        # data.loc[0] = 0
+        # data = data.groupby(level='id').apply(lambda x: x.to_numpy())
+        # all_swimmers = [data[i] for i in range(len(data))]
         print(all_swimmers[0])
 
     # let's compute the zoom
@@ -181,7 +209,7 @@ if __name__ == '__main__':
         lane = 8 - int(args.lane)
     size_box = (384, 256)
     zoom_two_videos(args.videog, args.videod, start_timeg, start_timed, all_swimmers[int(args.lane)-1], hm_right, hm_left, args.out,
-                    size_box, start_side, lane)
+                    size_box, start_side, lane, fps)
 
     # information of the video in the json
     # change and save the json
